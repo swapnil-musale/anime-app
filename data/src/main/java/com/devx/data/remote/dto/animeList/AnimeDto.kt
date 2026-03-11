@@ -1,4 +1,4 @@
-package com.devx.data.remote.dto
+package com.devx.data.remote.dto.animeList
 
 import androidx.annotation.Keep
 import com.devx.domain.model.Anime

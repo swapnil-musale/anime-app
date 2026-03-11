@@ -15,3 +15,8 @@ kotlin {
         jvmTarget = JvmTarget.JVM_11
     }
 }
+
+dependencies {
+    implementation(libs.javax.inject)
+    implementation(libs.kotlinx.coroutines.core)
+}
