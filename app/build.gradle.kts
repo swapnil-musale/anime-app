@@ -16,7 +16,7 @@ android {
 
     defaultConfig {
         applicationId = "com.devx.anime"
-        minSdk = 23
+        minSdk = 26
         targetSdk = 36
         versionCode = 1
         versionName = "1.0"
@@ -67,18 +67,6 @@ dependencies {
     implementation(libs.androidx.navigation.compose)
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
-
-    // Networking
-    implementation(libs.retrofit)
-    implementation(libs.retrofit.converter)
-    implementation(libs.okhttp)
-    implementation(libs.okhttp.logging.interceptor)
-    implementation(libs.kotlinx.serialization)
-
-    // Local Storage
-    ksp(libs.androidx.room.compiler)
-    implementation(libs.androidx.room.ktx)
-    implementation(libs.androidx.room.runtime)
 
     // Hilt
     ksp(libs.hilt.compiler)
