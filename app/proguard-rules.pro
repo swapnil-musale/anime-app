@@ -19,3 +19,19 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+
+-keepattributes SourceFile,LineNumberTable
+-renamesourcefileattribute SourceFile
+
+-keep class dagger.hilt.** { *; }
+-keep @dagger.hilt.InstallIn class * { *; }
+-keep @dagger.Module class * { *; }
+-keepclassmembers class * {
+    @javax.inject.Inject <init>(...);
+    @javax.inject.Inject <fields>;
+}
+-keep @dagger.hilt.android.lifecycle.HiltViewModel class * { *; }
+
+-keepattributes Signature
+-keepattributes Exceptions
+-keep,allowobfuscation interface *
