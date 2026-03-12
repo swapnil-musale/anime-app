@@ -8,6 +8,7 @@ interface AnimeLocalDataSource {
     fun observeAnimeList(): Flow<List<AnimeEntity>>
     suspend fun getAnimeList(): List<AnimeEntity>
     suspend fun insertAnimeList(animeList: List<AnimeEntity>)
+    suspend fun replaceAnimeList(animeList: List<AnimeEntity>)
     suspend fun clearAnimeList()
 
     suspend fun insertAnimeDetail(animeDetail: AnimeDetailEntity)

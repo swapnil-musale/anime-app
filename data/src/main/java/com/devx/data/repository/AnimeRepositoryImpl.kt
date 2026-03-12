@@ -35,14 +35,18 @@ class AnimeRepositoryImpl @Inject constructor(
 
         if (isRefresh) {
             currentPage = 0
-            localDataSource.clearAnimeList()
         }
 
         val pageToFetch = currentPage + 1
         return when (val result = remoteDataSource.fetchTopAnime(page = pageToFetch)) {
             is NetworkResult.Success -> {
                 currentPage = pageToFetch
-                localDataSource.insertAnimeList(result.data.animeList.map { it.toEntity() })
+                val entities = result.data.animeList.map { it.toEntity() }
+                if (isRefresh) {
+                    localDataSource.replaceAnimeList(entities)
+                } else {
+                    localDataSource.insertAnimeList(entities)
+                }
                 Result.success(value = PaginationInfo(hasNextPage = result.data.pagination.hasNextPage))
             }
 

@@ -4,6 +4,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Transaction
 import com.devx.data.local.entity.AnimeEntity
 import kotlinx.coroutines.flow.Flow
 
@@ -12,6 +13,12 @@ interface AnimeDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAll(animeList: List<AnimeEntity>)
+
+    @Transaction
+    suspend fun replaceAll(animeList: List<AnimeEntity>) {
+        clearAll()
+        insertAll(animeList)
+    }
 
     @Query("SELECT * FROM anime ORDER BY id ASC")
     fun observeAll(): Flow<List<AnimeEntity>>

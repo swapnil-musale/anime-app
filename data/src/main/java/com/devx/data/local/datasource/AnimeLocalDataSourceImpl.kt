@@ -24,6 +24,10 @@ class AnimeLocalDataSourceImpl @Inject constructor(
         animeDao.insertAll(animeList = animeList)
     }
 
+    override suspend fun replaceAnimeList(animeList: List<AnimeEntity>) {
+        animeDao.replaceAll(animeList = animeList)
+    }
+
     override suspend fun clearAnimeList() {
         animeDao.clearAll()
     }
