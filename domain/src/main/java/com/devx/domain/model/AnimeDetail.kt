@@ -1,11 +1,6 @@
-package com.devx.data.local.entity
+package com.devx.domain.model
 
-import androidx.room.Entity
-import androidx.room.PrimaryKey
-
-@Entity(tableName = "anime")
-data class AnimeEntity(
-    @PrimaryKey
+data class AnimeDetail(
     val malId: Int,
     val title: String,
     val titleEnglish: String,
@@ -13,4 +8,7 @@ data class AnimeEntity(
     val score: Double?,
     val imageUrl: String,
     val synopsis: String?,
+    val genres: List<String>,
+    val rating: String?,
+    val trailerEmbedUrl: String?
 )

@@ -5,7 +5,7 @@ import retrofit2.Response
 import java.io.IOException
 import kotlin.coroutines.cancellation.CancellationException
 
-suspend fun <T : Any> safeApiCall(execute: suspend () -> Response<T>): NetworkResult<T> {
+suspend inline fun <T : Any> safeApiCall(execute: suspend () -> Response<T>): NetworkResult<T> {
     return try {
         val response = execute()
         val responseBody = response.body()

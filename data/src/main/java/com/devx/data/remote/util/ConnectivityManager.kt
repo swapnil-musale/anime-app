@@ -4,8 +4,6 @@ import android.content.Context
 import android.net.ConnectivityManager
 import android.net.Network
 import android.net.NetworkCapabilities
-import dagger.hilt.android.qualifiers.ApplicationContext
-import jakarta.inject.Inject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
@@ -16,16 +14,11 @@ import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
-import javax.inject.Singleton
 
-@Singleton
-class ConnectivityManager @Inject constructor(
-    @ApplicationContext private val context: Context,
-    coroutineScope: CoroutineScope,
-) {
+class ConnectivityManager(private val applicationContext: Context, coroutineScope: CoroutineScope) {
 
     private val connectivityManager =
-        context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        applicationContext.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
 
     private val _status: MutableStateFlow<Status> = MutableStateFlow(Status.UNAVAILABLE)
     val status: StateFlow<Status> = _status.asStateFlow()

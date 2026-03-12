@@ -9,18 +9,22 @@ import com.devx.domain.repository.AnimeRepository
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
-import dagger.hilt.android.components.ActivityComponent
+import dagger.hilt.components.SingletonComponent
+import javax.inject.Singleton
 
 @Module
-@InstallIn(ActivityComponent::class)
+@InstallIn(SingletonComponent::class)
 abstract class RepositoryModule {
 
     @Binds
+    @Singleton
     abstract fun bindAnimeRepository(implementation: AnimeRepositoryImpl): AnimeRepository
 
     @Binds
+    @Singleton
     abstract fun bindAnimeRemoteDataSource(implementation: AnimeRemoteDataSourceImpl): AnimeRemoteDataSource
 
     @Binds
+    @Singleton
     abstract fun bindAnimeLocalDataSource(implementation: AnimeLocalDataSourceImpl): AnimeLocalDataSource
 }

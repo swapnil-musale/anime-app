@@ -2,8 +2,9 @@ package com.devx.data.di
 
 import android.content.Context
 import androidx.room.Room
-import com.devx.data.local.dao.AnimeDao
 import com.devx.data.local.AnimeDatabase
+import com.devx.data.local.dao.AnimeDao
+import com.devx.data.local.dao.AnimeDetailDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -22,12 +23,20 @@ object LocalStorageModule {
             context,
             AnimeDatabase::class.java,
             "anime_database"
-        ).build()
+        )
+            .fallbackToDestructiveMigration(dropAllTables = true)
+            .build()
     }
 
     @Provides
     @Singleton
     fun provideAnimeDao(database: AnimeDatabase): AnimeDao {
         return database.animeDao()
+    }
+
+    @Provides
+    @Singleton
+    fun provideAnimeDetailDao(database: AnimeDatabase): AnimeDetailDao {
+        return database.animeDetailDao()
     }
 }
