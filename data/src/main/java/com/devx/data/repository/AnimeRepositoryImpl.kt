@@ -24,13 +24,18 @@ class AnimeRepositoryImpl @Inject constructor(
     private var currentPage = 0
 
     override suspend fun fetchAnimePage(isRefresh: Boolean): Result<PaginationInfo> {
+        if (connectivityManagerImpl.status.value != ConnectivityManager.Status.AVAILABLE) {
+            val hasCachedData = localDataSource.getAnimeList().isNotEmpty()
+            return if (hasCachedData) {
+                Result.success(value = PaginationInfo(hasNextPage = false))
+            } else {
+                Result.failure(exception = IllegalStateException("No internet connection"))
+            }
+        }
+
         if (isRefresh) {
             currentPage = 0
             localDataSource.clearAnimeList()
-        }
-
-        if (connectivityManagerImpl.status.value != ConnectivityManager.Status.AVAILABLE) {
-            return Result.failure(exception = IllegalStateException("No internet connection"))
         }
 
         val pageToFetch = currentPage + 1

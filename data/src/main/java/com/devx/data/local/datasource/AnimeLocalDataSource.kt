@@ -6,6 +6,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface AnimeLocalDataSource {
     fun observeAnimeList(): Flow<List<AnimeEntity>>
+    suspend fun getAnimeList(): List<AnimeEntity>
     suspend fun insertAnimeList(animeList: List<AnimeEntity>)
     suspend fun clearAnimeList()
 

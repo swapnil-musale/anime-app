@@ -16,6 +16,10 @@ class AnimeLocalDataSourceImpl @Inject constructor(
         return animeDao.observeAll()
     }
 
+    override suspend fun getAnimeList(): List<AnimeEntity> {
+        return animeDao.getAll()
+    }
+
     override suspend fun insertAnimeList(animeList: List<AnimeEntity>) {
         animeDao.insertAll(animeList = animeList)
     }

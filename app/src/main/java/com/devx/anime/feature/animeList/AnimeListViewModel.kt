@@ -98,9 +98,9 @@ class AnimeListViewModel @Inject constructor(
         if (snapshot.isLoadingMore || snapshot.hasReachedEnd) return
 
         pagination = snapshot.copy(isLoadingMore = true)
-        val current = _uiState.value
-        if (current is AnimeListUiState.Success) {
-            _uiState.value = current.copy(isLoadingMore = true)
+        val currentUiState = _uiState.value
+        if (currentUiState is AnimeListUiState.Success) {
+            _uiState.value = currentUiState.copy(isLoadingMore = true)
         }
 
         viewModelScope.launch {
@@ -131,11 +131,11 @@ class AnimeListViewModel @Inject constructor(
     }
 
     fun refresh() {
-        val current = _uiState.value as? AnimeListUiState.Success ?: return
-        if (current.isRefreshing) return
+        val currentUiState = _uiState.value as? AnimeListUiState.Success ?: return
+        if (currentUiState.isRefreshing) return
 
         pagination = PaginationState()
-        _uiState.value = current.copy(isRefreshing = true, isLoadingMore = false)
+        _uiState.value = currentUiState.copy(isRefreshing = true, isLoadingMore = false)
 
         viewModelScope.launch {
             fetchAnimeList.invoke(isRefresh = true)
