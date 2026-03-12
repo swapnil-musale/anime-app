@@ -2,7 +2,8 @@ package com.devx.data.di
 
 import android.content.Context
 import com.devx.data.core.DispatcherProvider
-import com.devx.data.remote.util.ConnectivityManager
+import com.devx.data.remote.util.ConnectivityManagerImpl
+import com.devx.domain.core.ConnectivityManager
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -33,6 +34,6 @@ object CoreModule {
         @ApplicationContext context: Context,
         scope: CoroutineScope,
     ): ConnectivityManager {
-        return ConnectivityManager(applicationContext = context, coroutineScope = scope)
+        return ConnectivityManagerImpl(applicationContext = context, coroutineScope = scope)
     }
 }
