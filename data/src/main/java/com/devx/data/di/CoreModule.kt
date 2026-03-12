@@ -2,7 +2,7 @@ package com.devx.data.di
 
 import android.content.Context
 import com.devx.data.core.DispatcherProvider
-import com.devx.data.remote.util.ConnectivityManagerImpl
+import com.devx.data.core.ConnectivityManagerImpl
 import com.devx.domain.core.ConnectivityManager
 import dagger.Module
 import dagger.Provides

@@ -1,9 +1,9 @@
-package com.devx.data.remote.util
+package com.devx.data.core
 
 import android.content.Context
-import android.net.ConnectivityManager
 import android.net.Network
 import android.net.NetworkCapabilities
+import com.devx.domain.core.ConnectivityManager
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.awaitClose
@@ -16,19 +16,18 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
 import javax.inject.Inject
-import com.devx.domain.core.ConnectivityManager as AppConnectivityManager
 
 class ConnectivityManagerImpl @Inject constructor(
     @ApplicationContext private val applicationContext: Context,
     coroutineScope: CoroutineScope,
-) : AppConnectivityManager {
+) : ConnectivityManager {
 
     private val connectivityManager =
-        applicationContext.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        applicationContext.getSystemService(Context.CONNECTIVITY_SERVICE) as android.net.ConnectivityManager
 
-    private val _status: MutableStateFlow<AppConnectivityManager.Status> =
-        MutableStateFlow(AppConnectivityManager.Status.UNAVAILABLE)
-    override val status: StateFlow<AppConnectivityManager.Status> = _status.asStateFlow()
+    private val _status: MutableStateFlow<ConnectivityManager.Status> =
+        MutableStateFlow(ConnectivityManager.Status.UNAVAILABLE)
+    override val status: StateFlow<ConnectivityManager.Status> = _status.asStateFlow()
 
     init {
         observeNetworkConnectivity()
@@ -39,39 +38,39 @@ class ConnectivityManagerImpl @Inject constructor(
             .launchIn(scope = coroutineScope)
     }
 
-    override fun getCurrentStatus(): AppConnectivityManager.Status {
+    override fun getCurrentStatus(): ConnectivityManager.Status {
         val network =
-            connectivityManager.activeNetwork ?: return AppConnectivityManager.Status.UNAVAILABLE
+            connectivityManager.activeNetwork ?: return ConnectivityManager.Status.UNAVAILABLE
         val networkCapabilities =
             connectivityManager.getNetworkCapabilities(network)
-                ?: return AppConnectivityManager.Status.UNAVAILABLE
+                ?: return ConnectivityManager.Status.UNAVAILABLE
 
         return if (networkCapabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET) &&
             networkCapabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED)
         ) {
-            AppConnectivityManager.Status.AVAILABLE
+            ConnectivityManager.Status.AVAILABLE
         } else {
-            AppConnectivityManager.Status.UNAVAILABLE
+            ConnectivityManager.Status.UNAVAILABLE
         }
     }
 
-    private fun observeNetworkConnectivity(): Flow<AppConnectivityManager.Status> {
+    private fun observeNetworkConnectivity(): Flow<ConnectivityManager.Status> {
         return callbackFlow {
-            val callback = object : ConnectivityManager.NetworkCallback() {
+            val callback = object : android.net.ConnectivityManager.NetworkCallback() {
                 override fun onAvailable(network: Network) {
-                    trySend(AppConnectivityManager.Status.AVAILABLE)
+                    trySend(ConnectivityManager.Status.AVAILABLE)
                 }
 
                 override fun onLosing(network: Network, maxMsToLive: Int) {
-                    trySend(AppConnectivityManager.Status.LOSING)
+                    trySend(ConnectivityManager.Status.LOSING)
                 }
 
                 override fun onLost(network: Network) {
-                    trySend(AppConnectivityManager.Status.LOST)
+                    trySend(ConnectivityManager.Status.LOST)
                 }
 
                 override fun onUnavailable() {
-                    trySend(AppConnectivityManager.Status.UNAVAILABLE)
+                    trySend(ConnectivityManager.Status.UNAVAILABLE)
                 }
             }
 

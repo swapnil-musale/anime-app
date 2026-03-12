@@ -13,10 +13,10 @@ interface AnimeDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAll(animeList: List<AnimeEntity>)
 
-    @Query("SELECT * FROM anime")
+    @Query("SELECT * FROM anime ORDER BY id ASC")
     fun observeAll(): Flow<List<AnimeEntity>>
 
-    @Query("SELECT * FROM anime")
+    @Query("SELECT * FROM anime ORDER BY id ASC")
     suspend fun getAll(): List<AnimeEntity>
 
     @Query("DELETE FROM anime")

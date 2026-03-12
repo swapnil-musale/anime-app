@@ -1,14 +1,15 @@
 package com.devx.data.repository
 
+import com.devx.data.core.ConnectivityManagerImpl
 import com.devx.data.local.datasource.AnimeLocalDataSource
 import com.devx.data.local.mapper.mapToDomain
 import com.devx.data.local.mapper.toEntity
 import com.devx.data.remote.datasource.AnimeRemoteDataSource
-import com.devx.data.remote.util.ConnectivityManagerImpl
 import com.devx.data.remote.util.NetworkResult
 import com.devx.domain.core.ConnectivityManager
 import com.devx.domain.model.Anime
 import com.devx.domain.model.AnimeDetail
+import com.devx.domain.model.PaginationInfo
 import com.devx.domain.repository.AnimeRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -20,18 +21,24 @@ class AnimeRepositoryImpl @Inject constructor(
     private val connectivityManagerImpl: ConnectivityManagerImpl,
 ) : AnimeRepository {
 
-    override suspend fun fetchTopAnime(page: Int): Result<Unit> {
+    private var currentPage = 0
+
+    override suspend fun fetchAnimePage(isRefresh: Boolean): Result<PaginationInfo> {
+        if (isRefresh) {
+            currentPage = 0
+            localDataSource.clearAnimeList()
+        }
+
         if (connectivityManagerImpl.status.value != ConnectivityManager.Status.AVAILABLE) {
             return Result.failure(exception = IllegalStateException("No internet connection"))
         }
 
-        return when (val result = remoteDataSource.fetchTopAnime(page = page)) {
+        val pageToFetch = currentPage + 1
+        return when (val result = remoteDataSource.fetchTopAnime(page = pageToFetch)) {
             is NetworkResult.Success -> {
-                if (page == 1) {
-                    localDataSource.clearAnimeList()
-                }
+                currentPage = pageToFetch
                 localDataSource.insertAnimeList(result.data.animeList.map { it.toEntity() })
-                Result.success(value = Unit)
+                Result.success(value = PaginationInfo(hasNextPage = result.data.pagination.hasNextPage))
             }
 
             is NetworkResult.Error -> Result.failure(exception = IllegalStateException(result.message))

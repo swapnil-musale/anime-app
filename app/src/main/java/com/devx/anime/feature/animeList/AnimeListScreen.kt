@@ -9,8 +9,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -21,6 +23,8 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -48,12 +52,16 @@ fun AnimeListScreen(
     val onRefresh = remember(animeListViewModel) {
         { animeListViewModel.refresh() }
     }
+    val onLoadMore = remember(animeListViewModel) {
+        { animeListViewModel.loadNextPage() }
+    }
 
     AnimeListContent(
         uiState = uiState,
         onAnimeClick = onAnimeClick,
         onRetry = onRetry,
         onRefresh = onRefresh,
+        onLoadMore = onLoadMore,
         modifier = modifier,
     )
 }
@@ -65,6 +73,7 @@ private fun AnimeListContent(
     onAnimeClick: (Int) -> Unit,
     onRetry: () -> Unit,
     onRefresh: () -> Unit,
+    onLoadMore: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Scaffold(
@@ -104,7 +113,9 @@ private fun AnimeListContent(
             ) {
                 AnimeList(
                     animeList = uiState.animeList,
+                    isLoadingMore = uiState.isLoadingMore,
                     onAnimeClick = onAnimeClick,
+                    onLoadMore = onLoadMore,
                 )
             }
 
@@ -121,13 +132,32 @@ private fun AnimeListContent(
     }
 }
 
+private const val LOAD_MORE_THRESHOLD = 6
+
 @Composable
 private fun AnimeList(
     animeList: List<Anime>,
+    isLoadingMore: Boolean,
     onAnimeClick: (Int) -> Unit,
+    onLoadMore: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val listState = rememberLazyListState()
+
+    val shouldLoadMore by remember(listState) {
+        derivedStateOf {
+            val lastVisibleIndex = listState.layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: 0
+            val totalItems = listState.layoutInfo.totalItemsCount
+            totalItems > 0 && lastVisibleIndex >= totalItems - LOAD_MORE_THRESHOLD
+        }
+    }
+
+    LaunchedEffect(shouldLoadMore) {
+        if (shouldLoadMore) onLoadMore()
+    }
+
     LazyColumn(
+        state = listState,
         modifier = modifier.fillMaxSize(),
         contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp),
@@ -141,6 +171,19 @@ private fun AnimeList(
                 anime = anime,
                 onAnimeClick = onAnimeClick,
             )
+        }
+
+        if (isLoadingMore) {
+            item(key = "loading_footer", contentType = "footer") {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 12.dp),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    CircularProgressIndicator(modifier = Modifier.size(24.dp))
+                }
+            }
         }
     }
 }
@@ -235,6 +278,7 @@ private fun AnimeListLoadingPreview() {
             onAnimeClick = {},
             onRetry = {},
             onRefresh = {},
+            onLoadMore = {},
         )
     }
 }
@@ -270,6 +314,7 @@ private fun AnimeListSuccessPreview() {
             onAnimeClick = {},
             onRetry = {},
             onRefresh = {},
+            onLoadMore = {},
         )
     }
 }
@@ -296,6 +341,7 @@ private fun AnimeListOfflinePreview() {
             onAnimeClick = {},
             onRetry = {},
             onRefresh = {},
+            onLoadMore = {},
         )
     }
 }
@@ -309,6 +355,7 @@ private fun AnimeListErrorPreview() {
             onAnimeClick = {},
             onRetry = {},
             onRefresh = {},
+            onLoadMore = {},
         )
     }
 }
@@ -322,6 +369,7 @@ private fun AnimeListEmptyPreview() {
             onAnimeClick = {},
             onRetry = {},
             onRefresh = {},
+            onLoadMore = {},
         )
     }
 }

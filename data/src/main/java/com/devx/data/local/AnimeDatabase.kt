@@ -12,7 +12,7 @@ import com.devx.data.local.entity.AnimeEntity
         AnimeEntity::class,
         AnimeDetailEntity::class,
     ],
-    version = 2,
+    version = 3,
     exportSchema = false,
 )
 abstract class AnimeDatabase : RoomDatabase() {
