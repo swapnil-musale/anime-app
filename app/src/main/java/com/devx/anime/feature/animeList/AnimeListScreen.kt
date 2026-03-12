@@ -181,7 +181,7 @@ private fun AnimeList(
                         .padding(vertical = 12.dp),
                     contentAlignment = Alignment.Center,
                 ) {
-                    CircularProgressIndicator(modifier = Modifier.size(24.dp))
+                    CircularProgressIndicator(modifier = Modifier.size(42.dp))
                 }
             }
         }
