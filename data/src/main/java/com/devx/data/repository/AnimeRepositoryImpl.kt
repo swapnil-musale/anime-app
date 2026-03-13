@@ -1,6 +1,5 @@
 package com.devx.data.repository
 
-import com.devx.data.core.ConnectivityManagerImpl
 import com.devx.data.local.datasource.AnimeLocalDataSource
 import com.devx.data.local.mapper.mapToDomain
 import com.devx.data.local.mapper.toEntity
@@ -18,13 +17,13 @@ import javax.inject.Inject
 class AnimeRepositoryImpl @Inject constructor(
     private val remoteDataSource: AnimeRemoteDataSource,
     private val localDataSource: AnimeLocalDataSource,
-    private val connectivityManagerImpl: ConnectivityManagerImpl,
+    private val connectivityManager: ConnectivityManager,
 ) : AnimeRepository {
 
     private var currentPage = 0
 
     override suspend fun fetchAnimePage(isRefresh: Boolean): Result<PaginationInfo> {
-        if (connectivityManagerImpl.status.value != ConnectivityManager.Status.AVAILABLE) {
+        if (connectivityManager.status.value != ConnectivityManager.Status.AVAILABLE) {
             val hasCachedData = localDataSource.getAnimeList().isNotEmpty()
             return if (hasCachedData) {
                 Result.success(value = PaginationInfo(hasNextPage = false))
@@ -64,7 +63,7 @@ class AnimeRepositoryImpl @Inject constructor(
     override suspend fun fetchAnimeDetail(animeId: Int): Result<AnimeDetail> {
         val cached = localDataSource.getAnimeDetail(animeId = animeId)
 
-        if (connectivityManagerImpl.status.value != ConnectivityManager.Status.AVAILABLE) {
+        if (connectivityManager.status.value != ConnectivityManager.Status.AVAILABLE) {
             return if (cached != null) {
                 Result.success(value = cached.mapToDomain())
             } else {
