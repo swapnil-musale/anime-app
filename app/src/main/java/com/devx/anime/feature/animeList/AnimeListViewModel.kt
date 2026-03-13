@@ -3,6 +3,7 @@ package com.devx.anime.feature.animeList
 import androidx.compose.runtime.Immutable
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.devx.data.core.DispatcherProvider
 import com.devx.domain.core.ConnectivityManager
 import com.devx.domain.model.Anime
 import com.devx.domain.usecase.FetchAnimeListUseCase
@@ -21,6 +22,7 @@ class AnimeListViewModel @Inject constructor(
     private val observeAnimeList: ObserveAnimeListUseCase,
     private val fetchAnimeList: FetchAnimeListUseCase,
     private val connectivityManager: ConnectivityManager,
+    private val dispatcherProvider: DispatcherProvider,
 ) : ViewModel() {
 
     private data class PaginationState(
@@ -72,7 +74,7 @@ class AnimeListViewModel @Inject constructor(
     }
 
     private fun loadInitialPage() {
-        viewModelScope.launch {
+        viewModelScope.launch(dispatcherProvider.io) {
             if (_uiState.value !is AnimeListUiState.Success) {
                 _uiState.value = AnimeListUiState.Loading
             }
@@ -103,7 +105,7 @@ class AnimeListViewModel @Inject constructor(
             _uiState.value = currentUiState.copy(isLoadingMore = true)
         }
 
-        viewModelScope.launch {
+        viewModelScope.launch(dispatcherProvider.io) {
             fetchAnimeList.invoke(isRefresh = false)
                 .onSuccess { info ->
                     pagination = PaginationState(
@@ -137,7 +139,7 @@ class AnimeListViewModel @Inject constructor(
         pagination = PaginationState()
         _uiState.value = currentUiState.copy(isRefreshing = true, isLoadingMore = false)
 
-        viewModelScope.launch {
+        viewModelScope.launch(dispatcherProvider.io) {
             fetchAnimeList.invoke(isRefresh = true)
                 .onSuccess { info ->
                     pagination = PaginationState(hasReachedEnd = !info.hasNextPage)
