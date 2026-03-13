@@ -123,10 +123,6 @@ Manual pagination without the Jetpack Paging library:
    paused. When connectivity restores, the user needs to pull-to-refresh to reset and reload from
    page 1. Automatic background sync on reconnect is not implemented.
 
-6. **Genres stored as a comma-separated string in Room** — Room doesn't natively support
-   `List<String>` columns without a TypeConverter. Genres are joined as `"Action,Adventure"` in the
-   entity and split back on read, which keeps the schema simple.
-
 ---
 
 ## Project Structure
