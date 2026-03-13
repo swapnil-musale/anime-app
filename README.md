@@ -105,13 +105,18 @@ Manual pagination without the Jetpack Paging library:
 
 ## Assumptions Made
 
-1. **Coil for image loading** — Coil was chosen over Glide/Picasso because it's built with Kotlin
+1. **Multi-module by layer, not by feature** — the project is split into `app`, `domain`, and `data`
+   modules following a layer-based approach. Since the scope is small, splitting by
+   feature (e.g. `:feature:animeList`, `:feature:animeDetail`) would add unnecessary module overhead
+   without a meaningful build or scalability benefit at this size.
+
+2. **Coil for image loading** — Coil was chosen over Glide/Picasso because it's built with Kotlin
    and Coroutines`, and also support for lifecycle-aware loading.
 
 2. **UseCase layer added** — I added a
    dedicated UseCase layer to keep ViewModels thin and demonstrate clean architecture more clearly.
 
-3. **No ExoPlayer integration** — the assignment asked for a trailer player, but integrating 
+3. **No ExoPlayer integration** — the assignment asked for a trailer player, but integrating
    ExoPlayer/Media3 properly goes beyond the time constraint so didn't implemented it.
 
 4. **Pagination does not resume after coming back online** — if the device is offline, pagination is
