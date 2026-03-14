@@ -32,8 +32,7 @@ the [Jikan API](https://jikan.moe/) to fetch and display top-rated anime with fu
 ### Anime Detail Screen
 
 - Tap any anime card to open the detail screen
-- Shows trailer (embedded YouTube via WebView), poster fallback when no trailer is available, title,
-  synopsis, genres, episodes, score, and content rating
+- Shows title, poster image, synopsis, genres, episodes, score, and content rating
 - Cached detail is served instantly when offline
 
 ### Offline-First
